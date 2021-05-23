@@ -264,17 +264,23 @@ const (
 	Grey93                          // #eeeeee rgb(238,238,238)        hsl(0,0%,93%)
 )
 
-// Black
+// Black returns the given string wrapped in the appropriate escape
+// codes to set the named colour, and then back to the base colour
+// afterwards.
 func (c Colour) Black(s string) string {
 	return string(term[Black]) + s + string(term[c])
 }
 
-// Maroon
+// Maroon returns the given string wrapped in the appropriate escape
+// codes to set the named colour, and then back to the base colour
+// afterwards.
 func (c Colour) Maroon(s string) string {
 	return string(term[Maroon]) + s + string(term[c])
 }
 
-// Green
+// Green returns the given string wrapped in the appropriate escape
+// codes to set the named colour, and then back to the base colour
+// afterwards.
 func (c Colour) Green(s string) string {
 	return string(term[Green]) + s + string(term[c])
 }
@@ -286,6 +292,9 @@ func (c Colour) Green(s string) string {
 // Silver
 // Grey
 // Red
+
+// Red returns the given string wrapped in the appropriate escape codes
+// to set the named colour, and then back to the base colour afterwards.
 func (c Colour) Red(s string) string {
 	return string(term[Red]) + s + string(term[c])
 }
@@ -295,7 +304,10 @@ func (c Colour) Red(s string) string {
 // Blue
 // Fuchsia
 // Aqua
-// White
+
+// White returns the given string wrapped in the appropriate escape
+// codes to set the named colour, and then back to the base colour
+// afterwards.
 func (c Colour) White(s string) string {
 	return string(term[White]) + s + string(term[c])
 }
@@ -498,7 +510,10 @@ func (c Colour) White(s string) string {
 // PaleVioletRed1
 // Orchid2
 // Orchid1
-// Orange1
+
+// Orange1 returns the given string wrapped in the appropriate escape
+// codes to set the named colour, and then back to the base colour
+// afterwards.
 func (c Colour) Orange1(s string) string {
 	return string(term[Orange1]) + s + string(term[c])
 }
