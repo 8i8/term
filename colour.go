@@ -262,27 +262,28 @@ const (
 	Grey85                          // #dadada rgb(218,218,218)        hsl(0,0%,85%)
 	Grey89                          // #e4e4e4 rgb(228,228,228)        hsl(0,0%,89%)
 	Grey93                          // #eeeeee rgb(238,238,238)        hsl(0,0%,93%)
+	Reset
 )
 
 // Black returns the given string wrapped in the appropriate escape
 // codes to set the named colour, and then back to the base colour
 // afterwards.
 func (c Colour) Black(s string) string {
-	return string(term[Black]) + s + string(term[c])
+	return string(escapeCodes[Black]) + s + string(escapeCodes[Reset])
 }
 
 // Maroon returns the given string wrapped in the appropriate escape
 // codes to set the named colour, and then back to the base colour
 // afterwards.
 func (c Colour) Maroon(s string) string {
-	return string(term[Maroon]) + s + string(term[c])
+	return string(escapeCodes[Maroon]) + s + string(escapeCodes[Reset])
 }
 
 // Green returns the given string wrapped in the appropriate escape
 // codes to set the named colour, and then back to the base colour
 // afterwards.
 func (c Colour) Green(s string) string {
-	return string(term[Green]) + s + string(term[c])
+	return string(escapeCodes[Green]) + s + string(escapeCodes[Reset])
 }
 
 // Olive
@@ -296,7 +297,7 @@ func (c Colour) Green(s string) string {
 // Red returns the given string wrapped in the appropriate escape codes
 // to set the named colour, and then back to the base colour afterwards.
 func (c Colour) Red(s string) string {
-	return string(term[Red]) + s + string(term[c])
+	return string(escapeCodes[Red]) + s + string(escapeCodes[Reset])
 }
 
 // Lime
@@ -309,7 +310,7 @@ func (c Colour) Red(s string) string {
 // codes to set the named colour, and then back to the base colour
 // afterwards.
 func (c Colour) White(s string) string {
-	return string(term[White]) + s + string(term[c])
+	return string(escapeCodes[White]) + s + string(escapeCodes[Reset])
 }
 
 // Grey0
@@ -515,7 +516,7 @@ func (c Colour) White(s string) string {
 // codes to set the named colour, and then back to the base colour
 // afterwards.
 func (c Colour) Orange1(s string) string {
-	return string(term[Orange1]) + s + string(term[c])
+	return string(escapeCodes[Orange1]) + s + string(escapeCodes[Reset])
 }
 
 // SandyBrown
@@ -1367,7 +1368,7 @@ func (c Colour) HslString() string {
 	return "!%HslString(" + string(buf[n:]) + ")"
 }
 
-var term = [256][]byte{
+var escapeCodes = [...][]byte{
 	{'\033', '[', '3', '8', ';', '5', ';', '0', 'm'},
 	{'\033', '[', '3', '8', ';', '5', ';', '1', 'm'},
 	{'\033', '[', '3', '8', ';', '5', ';', '2', 'm'},
@@ -1624,12 +1625,13 @@ var term = [256][]byte{
 	{'\033', '[', '3', '8', ';', '5', ';', '2', '5', '3', 'm'},
 	{'\033', '[', '3', '8', ';', '5', ';', '2', '5', '4', 'm'},
 	{'\033', '[', '3', '8', ';', '5', ';', '2', '5', '5', 'm'},
+	{'\033', '[', '0', 'm'},
 }
 
 // Bytes returns a byteslice of the color in the hex format.
 func (c Colour) Bytes() []byte {
 	if Black <= c && c <= Grey93 {
-		return term[c]
+		return escapeCodes[c]
 	}
 	var buf [3]byte
 	n := fmtInt8(buf, uint8(c))
@@ -2714,3 +2716,4 @@ func fmtInt8(buf [3]byte, v uint8) int {
 // Grey85
 // Grey89
 // Grey93
+// Reset
