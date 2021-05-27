@@ -1,52 +1,58 @@
+// Copyright 2019 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+// Package term provides support functions for dealing with terminals, as
+// commonly found on UNIX systems.
+//
+// Putting a terminal into raw mode is the most common requirement:
+//
+// 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
+// 	if err != nil {
+// 	        panic(err)
+// 	}
+// 	defer term.Restore(int(os.Stdin.Fd()), oldState)
 package term
 
-import "golang.org/x/term"
-
-// Terminal contains the state for running a VT100 terminal that is capable of
-// reading lines of input.
-type Terminal = term.Terminal
-
-// EscapeCodes contains escape sequences that can be written to the terminal in
-// order to achieve different styles of text.
-type EscapeCodes = term.EscapeCodes
-
 // State contains the state of a terminal.
-type State = term.State
+type State struct {
+	state
+}
 
 // IsTerminal returns whether the given file descriptor is a terminal.
 func IsTerminal(fd int) bool {
-	return term.IsTerminal(fd)
+	return isTerminal(fd)
 }
 
 // MakeRaw puts the terminal connected to the given file descriptor into raw
 // mode and returns the previous state of the terminal so that it can be
 // restored.
 func MakeRaw(fd int) (*State, error) {
-	return term.MakeRaw(fd)
+	return makeRaw(fd)
 }
 
 // GetState returns the current state of a terminal which may be useful to
 // restore the terminal after a signal.
 func GetState(fd int) (*State, error) {
-	return term.GetState(fd)
+	return getState(fd)
 }
 
 // Restore restores the terminal connected to the given file descriptor to a
 // previous state.
 func Restore(fd int, oldState *State) error {
-	return term.Restore(fd, oldState)
+	return restore(fd, oldState)
 }
 
 // GetSize returns the visible dimensions of the given terminal.
 //
 // These dimensions don't include any scrollback buffer height.
 func GetSize(fd int) (width, height int, err error) {
-	return term.GetSize(fd)
+	return getSize(fd)
 }
 
 // ReadPassword reads a line of input from a terminal without local echo.  This
 // is commonly used for inputting passwords and other sensitive data. The slice
 // returned does not include the \n.
 func ReadPassword(fd int) ([]byte, error) {
-	return term.ReadPassword(fd)
+	return readPassword(fd)
 }
