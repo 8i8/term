@@ -11,13 +11,25 @@ type EscapeCodes struct {
 	// Foreground colors
 	Black, Red, Green, Yellow, Blue, Magenta, Cyan, White []byte
 
+	// Background colors
+	BlackBG, RedBG, GreenBG, YellowBG, BlueBG, MagentaBG, CyanBG, WhiteBG []byte
+
 	XTerm XTermColour
 
 	// Reset all attributes
-	Reset    []byte
-	Clear    []byte
-	NextLine []byte
-	LLCorner []byte
+	Reset      []byte
+	Clear      []byte // Clear screen.
+	Clear0     []byte // Clear to end.
+	Clear1     []byte // Clear to start.
+	Clear2     []byte // Clear entire screen
+	ClearLine  []byte // Clear line.
+	ClearLine0 []byte // Clear line to end.
+	ClearLine1 []byte // Clear line to start
+	ClearLine2 []byte // Clear entire line.
+	NextLine   []byte
+	LLCorner   []byte
+	Underline  []byte
+	Reverse    []byte
 }
 
 var vt100EscapeCodes = EscapeCodes{
@@ -31,12 +43,33 @@ var vt100EscapeCodes = EscapeCodes{
 	Cyan:    []byte{keyEscape, '[', '3', '6', 'm'},
 	White:   []byte{keyEscape, '[', '3', '7', 'm'},
 
+	BlackBG:   []byte{keyEscape, '[', '4', '0', 'm'},
+	RedBG:     []byte{keyEscape, '[', '4', '1', 'm'},
+	GreenBG:   []byte{keyEscape, '[', '4', '2', 'm'},
+	YellowBG:  []byte{keyEscape, '[', '4', '3', 'm'},
+	BlueBG:    []byte{keyEscape, '[', '4', '4', 'm'},
+	MagentaBG: []byte{keyEscape, '[', '4', '5', 'm'},
+	CyanBG:    []byte{keyEscape, '[', '4', '6', 'm'},
+	WhiteBG:   []byte{keyEscape, '[', '4', '7', 'm'},
+
 	XTerm: Colours,
 
-	Reset:    []byte{keyEscape, '[', '0', 'm'},
-	Clear:    []byte{keyEscape, '[', '2', 'J'},
-	NextLine: []byte{keyEscape, 'E'},
-	LLCorner: []byte{keyEscape, 'F'},
+	Reset: []byte{keyEscape, '[', '0', 'm'},
+
+	Clear:  []byte{keyEscape, '[', 'J'},      // Clear screen.
+	Clear0: []byte{keyEscape, '[', '0', 'J'}, // Clear to end.
+	Clear1: []byte{keyEscape, '[', '1', 'J'}, // Clear to start.
+	Clear2: []byte{keyEscape, '[', '2', 'J'}, // Clear entire screen.
+
+	ClearLine:  []byte{keyEscape, '[', 'J'},      // Clear line.
+	ClearLine0: []byte{keyEscape, '[', '0', 'J'}, // Clear line to end.
+	ClearLine1: []byte{keyEscape, '[', '1', 'J'}, // Clear line to start.
+	ClearLine2: []byte{keyEscape, '[', '2', 'J'}, // Clear entire line.
+
+	NextLine:  []byte{keyEscape, 'E'},
+	LLCorner:  []byte{keyEscape, 'F'},
+	Underline: []byte{keyEscape, '[', '4', 'm'},
+	Reverse:   []byte{keyEscape, '[', '7', 'm'},
 }
 
 // Terminal contains the state for running a VT100 terminal that is capable of
@@ -52,7 +85,7 @@ type Terminal struct {
 	// Escape contains a pointer to the escape codes for this terminal.
 	// It's always a valid pointer, although the escape codes themselves
 	// may be empty if the terminal doesn't support them.
-	Escape *EscapeCodes
+	Esc *EscapeCodes
 
 	// lock protects the terminal and the state in this object from
 	// concurrent processing of a key press and a Write() call.
@@ -99,9 +132,10 @@ type Terminal struct {
 	historyPending string
 }
 
+// NewTerminal returns a terminal with the given prompt.
 func NewTerminal(c io.ReadWriter, prompt string) *Terminal {
 	return &Terminal{
-		Escape:       &vt100EscapeCodes,
+		Esc:          &vt100EscapeCodes,
 		c:            c,
 		prompt:       []rune(prompt),
 		termWidth:    80,

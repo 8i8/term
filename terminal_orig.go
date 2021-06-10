@@ -835,6 +835,7 @@ func (t *Terminal) clearAndRepaintLinePlusNPrevious(numPrevLines int) {
 	t.moveCursorToPos(t.pos)
 }
 
+// SetSize sets the size of the terminal.
 func (t *Terminal) SetSize(width, height int) error {
 	t.lock.Lock()
 	defer t.lock.Unlock()

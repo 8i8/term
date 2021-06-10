@@ -268,6 +268,7 @@ type XTermColour struct {
 	Grey93            Colour // 255 #eeeeee rgb(238,238,238) hsl(0,0%,93%)
 }
 
+// Colours is a struct containing the 256 ANSI colour codes.
 var Colours = XTermColour{
 	Black:             []byte{'\033', '[', '3', '8', ';', '5', ';', '0', 'm'},           // 000
 	Maroon:            []byte{'\033', '[', '3', '8', ';', '5', ';', '1', 'm'},           // 001%)
